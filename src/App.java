@@ -1,42 +1,78 @@
+import java.io.IOException;
+
 public class App {
-    public static void main(String[] args)
-    {
-        /*  Introduction and TODO List
+    public static void main(String[] args) throws IOException {
+        // URL for "Romeo and Juliet" from Project Gutenberg
+        String bookUrl1 = "https://www.gutenberg.org/cache/epub/11/pg11.txt";
+        // URL for "Alice's Adventures in Wonderland" from Project Gutenberg
+        String bookUrl2 = "https://www.gutenberg.org/cache/epub/11/pg11.txt";
+        // Read and translate "Romeo and Juliet"
+        Book input1 = new Book();
+        input1.readFromUrl("Romeo and Juliet", bookUrl1);
 
-        This project is setup with four main classes:
-            1. App - the main application
-            2. Book - a class that creates the basic book objects.
-                - a Book contains a representation of a real book.
-                - Book has methods to read data in from various sources
-                - Book also has methods to read data out.
-            3. PigLatinTranslator - a static class
-                - Used to implement your translator.
-                - Has two public methods to take input and return a translated copy.
-                    - Book translate(Book input)
-                    - String translate(String input)
-            4. TestSuite - a simple class that helps you test your work.
-                - Just like CodingBat this class tries your code against various cases.
-                - It will tell you which cases return expected output or not
-         */
+        // Count the number of words in the original book
+        int originalWordCount1 = countWords(input1);
+        System.out.println("Book: Romeo and Juliet");
+        System.out.println("Original word count: " + originalWordCount1);
 
+        // Translate the book into Pig Latin
+        Book translatedBook1 = PigLatinTranslator.translate(input1);
 
-        // Run tests, comment out once they pass.
-        TestSuite.run();
+        // Count the number of words in the translated book
+        int translatedWordCount1 = countWords(translatedBook1);
+        System.out.println("Translated word count: " + translatedWordCount1);
 
-        // Starter book
-        Book input = new Book();
+        // Save the translated book to a text file
+        String fileName1 = "translated_romeo_and_juliet.txt";
+        saveToFile(translatedBook1, fileName1);
+        System.out.println("Translated book saved to: " + fileName1);
 
-        // Start with a "test" book based on a string.
-        // Get this to work, and all the tests to pass first.
-        input.readFromString("Test", "Dog\nCat\nMouse");
+        // --- Now process the second book: "Alice's Adventures in Wonderland" ---
 
-        // Example reading from a URL
-        //input.readFromUrl("Romeo and Juliette", "https://gutenberg.pglaf.org/cache/epub/1513/pg1513.txt");
+        // Read and translate "Alice's Adventures in Wonderland"
+        Book input2 = new Book();
+        input2.readFromUrl("Alice's Adventures in Wonderland", bookUrl2);
 
-        input.printlines(0,2);
-        Book output = PigLatinTranslator.translate(input);
-        output.printlines(0,2);
-        //output.writeToFile();
+        // Count the number of words in the original book
+        int originalWordCount2 = countWords(input2);
+        System.out.println("Book: Alice's Adventures in Wonderland");
+        System.out.println("Original word count: " + originalWordCount2);
+
+        // Translate the book into Pig Latin
+        Book translatedBook2 = PigLatinTranslator.translate(input2);
+
+        // Count the number of words in the translated book
+        int translatedWordCount2 = countWords(translatedBook2);
+        System.out.println("Translated word count: " + translatedWordCount2);
+
+        // Save the translated book to a text file
+        String fileName2 = "translated_alices_adventures_in_wonderland.txt";
+        saveToFile(translatedBook2, fileName2);
+        System.out.println("Translated book saved to: " + fileName2);
+
+        // Run the test suite to verify the translation logic
+        System.out.println("\nRunning Test Suite...");
+        TestSuite.run();  // This will print out whether the tests pass or fail.
+    }
+
+    // Method to count words in a book
+    private static int countWords(Book book) {
+        int wordCount = 0;
+        for (int i = 0; i < book.getLineCount(); i++) {
+            String line = book.getLine(i);
+            wordCount += line.split("\\s+").length;  // Split by whitespace to count words
+        }
+        return wordCount;
+    }
+
+    // Method to save a book to a text file
+    private static void saveToFile(Book book, String fileName) throws IOException {
+        try (java.io.BufferedWriter writer = new java.io.BufferedWriter(new java.io.FileWriter(fileName))) {
+            writer.write(book.getTitle() + "\n\n");  // Write the title at the top of the file
+            for (int i = 0; i < book.getLineCount(); i++) {
+                writer.write(book.getLine(i) + "\n");
+            }
+            System.out.println("Book saved to: " + fileName);
+        }
     }
 }
-
